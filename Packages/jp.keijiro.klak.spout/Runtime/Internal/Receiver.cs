@@ -9,9 +9,10 @@ namespace Klak.Spout {
 //
 sealed class Receiver : System.IDisposable
 {
-    #region Public property
+    #region Public properties
 
     public Texture2D Texture => _texture;
+    public bool IsFrameNew => _isFrameNew;
 
     #endregion
 
@@ -20,6 +21,7 @@ sealed class Receiver : System.IDisposable
     IntPtr _plugin;
     EventKicker _event;
     Texture2D _texture;
+    bool _isFrameNew = true;
 
     #endregion
 
@@ -64,6 +66,16 @@ sealed class Receiver : System.IDisposable
 
     #endregion
 
+    #region Sync mode
+
+    public void SetSyncMode(bool sync)
+    {
+        if (_plugin == IntPtr.Zero) return;
+        Plugin.SetReceiverSyncMode(_plugin, sync ? 1 : 0);
+    }
+
+    #endregion
+
     #region Frame update method
 
     public void Update()
@@ -71,6 +83,7 @@ sealed class Receiver : System.IDisposable
         if (_plugin == IntPtr.Zero) return;
 
         var data = Plugin.GetReceiverData(_plugin);
+        _isFrameNew = data.isFrameNew;
 
         // Texture refresh:
         // If we are referring to an old texture pointer, destroy it first.

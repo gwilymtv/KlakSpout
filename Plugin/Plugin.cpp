@@ -88,3 +88,9 @@ extern "C" void UNITY_INTERFACE_EXPORT
     _system->spout.GetSenderNames(&senders);
     std::tie(*names, *count) = MarshalStringSet(senders);
 }
+
+extern "C" void UNITY_INTERFACE_EXPORT
+  SetReceiverSyncMode(Receiver* receiver, int syncToSender)
+{
+    receiver->setSyncToSender(syncToSender != 0);
+}

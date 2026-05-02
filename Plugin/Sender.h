@@ -2,6 +2,7 @@
 
 #include "Common.h"
 #include "System.h"
+#include "Spout/SpoutFrameCount.h"
 
 namespace KlakSpout {
 
@@ -20,6 +21,7 @@ public:
             _system->spout.ReleaseSenderName(_name.c_str());
             _texture = nullptr;
         }
+        _frame.CleanupFrameCount();
     }
 
     void update(IUnknown* source)
@@ -43,6 +45,8 @@ public:
             unknown.As(&d3d11);
             updateTexture(d3d11.Get());
         }
+
+        if (_texture) _frame.SetNewFrame();
     }
 
 private:
@@ -50,6 +54,7 @@ private:
     std::string _name;
     int _width, _height;
     WRL::ComPtr<ID3D11Texture2D> _texture;
+    spoutFrameCount _frame;
 
     void initialize()
     {
@@ -82,9 +87,13 @@ private:
 
         // Create a Spout sender object for the shared texture.
         auto res = _system->spout
-          .CreateSender(_name.c_str(), _width, _height, handle, desc.Format);
+          .CreateSender((char*)_name.c_str(), _width, _height, handle, desc.Format);
 
-        if (!res) LogError("CreateSender", _name, 0);
+        if (!res) { LogError("CreateSender", _name, 0); return; }
+
+        // Enable Spout2 frame counting so receivers can detect new frames.
+        _frame.SetFrameCount(true);
+        _frame.EnableFrameCount(_name.c_str());
     }
 
     void updateTexture(ID3D11Resource* source)

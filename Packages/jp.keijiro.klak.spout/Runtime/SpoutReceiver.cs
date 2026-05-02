@@ -77,13 +77,19 @@ public sealed partial class SpoutReceiver : MonoBehaviour
     {
         // Receiver lazy initialization
         if (_receiver == null)
+        {
             _receiver = new Receiver(_sourceName);
+            _receiver.SetSyncMode(_syncToSender);
+        }
 
         // Receiver plugin-side update
         _receiver.Update();
 
         // Do nothing further if no texture is ready yet.
         if (_receiver.Texture == null) return;
+
+        // Skip blit when the sender hasn't produced a new frame.
+        if (!_receiver.IsFrameNew) return;
 
         // Received texture buffering
         var buffer = PrepareBuffer();

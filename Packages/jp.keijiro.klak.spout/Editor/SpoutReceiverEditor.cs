@@ -8,6 +8,7 @@ namespace Klak.Spout.Editor {
 sealed class SpoutReceiverEditor : UnityEditor.Editor
 {
     SerializedProperty _sourceName;
+    SerializedProperty _syncToSender;
     SerializedProperty _targetTexture;
     SerializedProperty _targetRenderer;
     SerializedProperty _targetMaterialProperty;
@@ -64,6 +65,7 @@ sealed class SpoutReceiverEditor : UnityEditor.Editor
     {
         var finder = new PropertyFinder(serializedObject);
         _sourceName = finder["_sourceName"];
+        _syncToSender = finder["_syncToSender"];
         _targetTexture = finder["_targetTexture"];
         _targetRenderer = finder["_targetRenderer"];
         _targetMaterialProperty = finder["_targetMaterialProperty"];
@@ -105,6 +107,9 @@ sealed class SpoutReceiverEditor : UnityEditor.Editor
         }
 
         EditorGUI.indentLevel--;
+
+        // Frame sync
+        EditorGUILayout.PropertyField(_syncToSender);
 
         serializedObject.ApplyModifiedProperties();
 

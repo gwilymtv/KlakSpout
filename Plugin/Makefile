@@ -9,11 +9,12 @@ DEST = ../Packages/jp.keijiro.klak.spout/Plugin/
 SRCS = Plugin.cpp \
        Spout/SpoutSenderNames.cpp \
        Spout/SpoutSharedMemory.cpp \
-       Spout/SpoutUtils.cpp
+       Spout/SpoutUtils.cpp \
+       Spout/SpoutFrameCount.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
-LIBS = -Wl,--subsystem,windows -static -ldxgi -ld3d12 -ld3d11 -lole32
+LIBS = -Wl,--subsystem,windows -static -ldxgi -ld3d12 -ld3d11 -lole32 -lwinmm -lshell32 -lcomctl32 -lversion
 
 #
 # Compiler/linker options
@@ -23,8 +24,8 @@ TOOLCHAIN = x86_64-w64-mingw32
 CC = $(TOOLCHAIN)-g++-posix
 STRIP = $(TOOLCHAIN)-strip
 
-CC_FLAGS = -O2
-CC_FLAGS += -I. -std=c++17 -DMINI_SPOUTUTILS
+CC_FLAGS = -O2 # -g -O0
+CC_FLAGS += -I. -std=c++17
 CC_FLAGS += -Wall -Wno-unknown-pragmas -Wno-conversion-null
 CC_FLAGS += -Wno-format -Wno-unused-function
 

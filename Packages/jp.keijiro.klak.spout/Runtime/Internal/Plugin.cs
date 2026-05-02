@@ -13,6 +13,7 @@ static class Plugin
         public uint width, height;
         public Format format;
         public IntPtr texturePointer;
+        [MarshalAs(UnmanagedType.Bool)] public bool isFrameNew;
     }
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
@@ -33,6 +34,9 @@ static class Plugin
     public static extern void GetSenderNames
       ([Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)]
        out IntPtr[] names, out int count);
+
+    [DllImport("KlakSpout")]
+    public static extern void SetReceiverSyncMode(IntPtr receiver, int syncToSender);
 
 #else
 
@@ -55,6 +59,8 @@ static class Plugin
         names = null;
         count = 0;
     }
+
+    public static void SetReceiverSyncMode(IntPtr receiver, int syncToSender) {}
 
 #endif
 }

@@ -47,6 +47,22 @@ partial class SpoutReceiver
 
     #endregion
 
+    #region Sync settings
+
+    [SerializeField] bool _syncToSender = false;
+
+    public bool syncToSender
+      { get => _syncToSender;
+        set => SetSyncToSender(value); }
+
+    void SetSyncToSender(bool sync)
+    {
+        _syncToSender = sync;
+        _receiver?.SetSyncMode(sync);
+    }
+
+    #endregion
+
     #region Runtime property
 
     public RenderTexture receivedTexture

@@ -695,7 +695,7 @@ bool spoutFrameCount::WaitNewFrame(DWORD dwTimeout)
 		}
 		// Sleep 4 msec (1/4 frame) to prevent high CPU usage
 		// (std::chrono sleep cannot be used because it affects StartTiming and EndTiming)
-		Sleep(4);
+		Sleep(1);
 
 	} while (EndTiming() < dwTimeout);
 

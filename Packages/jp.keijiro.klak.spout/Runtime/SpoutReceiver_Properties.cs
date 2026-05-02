@@ -78,6 +78,25 @@ partial class SpoutReceiver
       => _resources = resources;
 
     #endregion
+
+    #region Double-buffer option
+
+    [SerializeField] bool _useDoubleBuffer = false;
+
+    public bool useDoubleBuffer
+      { get => _useDoubleBuffer;
+        set => _useDoubleBuffer = value; }
+
+    #endregion
+
+    #region Diagnostics
+
+    public float copiesPerSecond  { get; private set; }
+    public float flushesPerSecond { get; private set; }
+    public int   reconnectCount   { get; private set; }
+    public int   missedFrames     { get; private set; }
+
+    #endregion
 }
 
 } // namespace Klak.Spout

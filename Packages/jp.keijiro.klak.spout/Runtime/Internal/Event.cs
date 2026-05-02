@@ -44,6 +44,9 @@ class EventKicker : IDisposable
     public void Dispose()
       => MemoryPool.FreeOnEndOfFrame(_dataMem);
 
+    public void UpdateTexturePointer(IntPtr ptr)
+      => Marshal.WriteIntPtr(_dataMem.AddrOfPinnedObject(), IntPtr.Size, ptr);
+
     public void IssuePluginEvent(EventID eventID)
     {
         if (_cmdBuffer == null)

@@ -12,6 +12,7 @@ sealed class SpoutReceiverEditor : UnityEditor.Editor
     SerializedProperty _targetTexture;
     SerializedProperty _targetRenderer;
     SerializedProperty _targetMaterialProperty;
+    SerializedProperty _useDoubleBuffer;
 
     static class Labels
     {
@@ -69,6 +70,7 @@ sealed class SpoutReceiverEditor : UnityEditor.Editor
         _targetTexture = finder["_targetTexture"];
         _targetRenderer = finder["_targetRenderer"];
         _targetMaterialProperty = finder["_targetMaterialProperty"];
+        _useDoubleBuffer = finder["_useDoubleBuffer"];
     }
 
     public override void OnInspectorGUI()
@@ -110,10 +112,24 @@ sealed class SpoutReceiverEditor : UnityEditor.Editor
 
         // Frame sync
         EditorGUILayout.PropertyField(_syncToSender);
+        EditorGUILayout.PropertyField(_useDoubleBuffer);
 
         serializedObject.ApplyModifiedProperties();
 
         if (restart) RequestRestart();
+
+        if (Application.isPlaying)
+        {
+            EditorGUILayout.Space();
+            var recv = (SpoutReceiver)target;
+            EditorGUI.BeginDisabledGroup(true);
+            EditorGUILayout.FloatField("Copies / Sec",  recv.copiesPerSecond);
+            EditorGUILayout.FloatField("Flushes / Sec", recv.flushesPerSecond);
+            EditorGUILayout.IntField("Reconnect Count", recv.reconnectCount);
+            EditorGUILayout.IntField("Missed Frames",   recv.missedFrames);
+            EditorGUI.EndDisabledGroup();
+            Repaint();
+        }
     }
 }
 

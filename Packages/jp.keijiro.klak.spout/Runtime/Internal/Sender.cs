@@ -53,10 +53,17 @@ sealed class Sender : System.IDisposable
 
     #endregion
 
-    #region Frame update method
+    #region Frame update methods
 
     public void Update()
       => _event?.IssuePluginEvent(EventID.UpdateSender);
+
+    public void Update(Texture texture)
+    {
+        if (_event == null) return;
+        _event.UpdateTexturePointer(texture.GetNativeTexturePtr());
+        _event.IssuePluginEvent(EventID.UpdateSender);
+    }
 
     #endregion
 }

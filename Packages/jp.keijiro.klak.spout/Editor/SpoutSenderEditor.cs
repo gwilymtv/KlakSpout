@@ -12,6 +12,7 @@ sealed class SpoutSenderEditor : UnityEditor.Editor
     SerializedProperty _captureMethod;
     SerializedProperty _sourceCamera;
     SerializedProperty _sourceTexture;
+    SerializedProperty _useDoubleBuffer;
 
     static class Labels
     {
@@ -39,6 +40,7 @@ sealed class SpoutSenderEditor : UnityEditor.Editor
         _captureMethod = finder["_captureMethod"];
         _sourceCamera = finder["_sourceCamera"];
         _sourceTexture = finder["_sourceTexture"];
+        _useDoubleBuffer = finder["_useDoubleBuffer"];
     }
 
     public override void OnInspectorGUI()
@@ -63,6 +65,8 @@ sealed class SpoutSenderEditor : UnityEditor.Editor
             EditorGUILayout.PropertyField(_sourceTexture);
 
         EditorGUI.indentLevel--;
+
+        EditorGUILayout.PropertyField(_useDoubleBuffer);
 
         serializedObject.ApplyModifiedProperties();
 

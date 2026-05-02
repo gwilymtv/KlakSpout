@@ -138,7 +138,11 @@ public sealed partial class SpoutReceiver : MonoBehaviour
         }
 
         // Skip blit when the sender hasn't produced a new frame.
-        if (!_receiver.IsFrameNew) return;
+        if (!_receiver.IsFrameNew)
+        {
+            UpdateDiagnostics(false, false, _receiver.Texture.GetNativeTexturePtr());
+            return;
+        }
 
         // Received texture buffering
         var dest = PrepareBuffers();

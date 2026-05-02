@@ -34,7 +34,7 @@ public:
         // effectively pacing Unity to the sender's frame rate.
         // Both calls are no-ops until frame counting is enabled on connect.
         if (_syncToSender.load())
-            _frame.WaitNewFrame(100);
+            _frame.WaitNewFrame(33);
         else
             _frame.GetNewFrame();
         _isFrameNew = _frame.IsFrameNew();

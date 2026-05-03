@@ -633,7 +633,7 @@ bool spoutFrameCount::GetNewFrame()
 // Check the frame count semaphore and wait for a new frame
 // dwTimeout - timeout of poll loop in milliseconds
 // To be tested
-bool spoutFrameCount::WaitNewFrame(DWORD dwTimeout)
+bool spoutFrameCount::WaitNewFrame(DWORD dwTimeout, DWORD dwSleepMs)
 {
 	// Return silently if frame count is disabled
 	if (!m_bFrameCount || m_bCountDisabled || !m_hCountSemaphore)
@@ -693,9 +693,10 @@ bool spoutFrameCount::WaitNewFrame(DWORD dwTimeout)
 			EndTimePeriod();
 			return true;
 		}
-		// Sleep 4 msec (1/4 frame) to prevent high CPU usage
+		// Sleep to prevent high CPU usage during polling.
+		// dwSleepMs=0 yields the time slice without sleeping.
 		// (std::chrono sleep cannot be used because it affects StartTiming and EndTiming)
-		Sleep(1);
+		Sleep(dwSleepMs);
 
 	} while (EndTiming() < dwTimeout);
 

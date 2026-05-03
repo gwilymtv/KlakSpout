@@ -61,6 +61,32 @@ partial class SpoutReceiver
         _receiver?.SetSyncMode(sync);
     }
 
+    [SerializeField, Min(1), Tooltip("How long to wait for a new frame from the sender before giving up, in milliseconds. Lower values reduce latency when the sender stalls; higher values tolerate slower senders.")]
+    int _syncTimeoutMs = 33;
+
+    public int syncTimeoutMs
+      { get => _syncTimeoutMs;
+        set => SetSyncTimeout(value); }
+
+    void SetSyncTimeout(int ms)
+    {
+        _syncTimeoutMs = Mathf.Max(1, ms);
+        _receiver?.SetSyncTimeout(_syncTimeoutMs);
+    }
+
+    [SerializeField, Min(0), Tooltip("How long to sleep between polling attempts while waiting for a new sender frame, in milliseconds. Lower values increase sync accuracy at the cost of CPU usage. 0 spins as fast as possible (yields the OS time slice between polls but does not sleep).")]
+    int _syncSleepMs = 4;
+
+    public int syncSleepMs
+      { get => _syncSleepMs;
+        set => SetSyncSleepMs(value); }
+
+    void SetSyncSleepMs(int ms)
+    {
+        _syncSleepMs = Mathf.Max(0, ms);
+        _receiver?.SetSyncSleep(_syncSleepMs);
+    }
+
     #endregion
 
     #region Runtime property

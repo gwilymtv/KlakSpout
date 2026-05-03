@@ -9,6 +9,8 @@ sealed class SpoutReceiverEditor : UnityEditor.Editor
 {
     SerializedProperty _sourceName;
     SerializedProperty _syncToSender;
+    SerializedProperty _syncTimeoutMs;
+    SerializedProperty _syncSleepMs;
     SerializedProperty _targetTexture;
     SerializedProperty _targetRenderer;
     SerializedProperty _targetMaterialProperty;
@@ -66,8 +68,10 @@ sealed class SpoutReceiverEditor : UnityEditor.Editor
     {
         var finder = new PropertyFinder(serializedObject);
         _sourceName = finder["_sourceName"];
-        _syncToSender = finder["_syncToSender"];
-        _targetTexture = finder["_targetTexture"];
+        _syncToSender   = finder["_syncToSender"];
+        _syncTimeoutMs  = finder["_syncTimeoutMs"];
+        _syncSleepMs    = finder["_syncSleepMs"];
+        _targetTexture  = finder["_targetTexture"];
         _targetRenderer = finder["_targetRenderer"];
         _targetMaterialProperty = finder["_targetMaterialProperty"];
         _useDoubleBuffer = finder["_useDoubleBuffer"];
@@ -112,6 +116,13 @@ sealed class SpoutReceiverEditor : UnityEditor.Editor
 
         // Frame sync
         EditorGUILayout.PropertyField(_syncToSender);
+        if (_syncToSender.boolValue)
+        {
+            EditorGUI.indentLevel++;
+            EditorGUILayout.PropertyField(_syncTimeoutMs, new GUIContent("Timeout (ms)"));
+            EditorGUILayout.PropertyField(_syncSleepMs,   new GUIContent("Sleep (ms)"));
+            EditorGUI.indentLevel--;
+        }
         EditorGUILayout.PropertyField(_useDoubleBuffer);
 
         serializedObject.ApplyModifiedProperties();

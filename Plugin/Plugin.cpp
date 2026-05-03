@@ -94,3 +94,15 @@ extern "C" void UNITY_INTERFACE_EXPORT
 {
     receiver->setSyncToSender(syncToSender != 0);
 }
+
+extern "C" void UNITY_INTERFACE_EXPORT
+  SetReceiverSyncTimeout(Receiver* receiver, int timeoutMs)
+{
+    receiver->setSyncTimeout(timeoutMs);
+}
+
+extern "C" void UNITY_INTERFACE_EXPORT
+  SetReceiverSyncSleep(Receiver* receiver, int sleepMs)
+{
+    receiver->setSyncSleep(sleepMs);
+}

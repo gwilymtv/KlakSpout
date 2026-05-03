@@ -38,6 +38,12 @@ static class Plugin
     [DllImport("KlakSpout")]
     public static extern void SetReceiverSyncMode(IntPtr receiver, int syncToSender);
 
+    [DllImport("KlakSpout")]
+    public static extern void SetReceiverSyncTimeout(IntPtr receiver, int timeoutMs);
+
+    [DllImport("KlakSpout")]
+    public static extern void SetReceiverSyncSleep(IntPtr receiver, int sleepMs);
+
 #else
 
     public static IntPtr GetRenderEventCallback()
@@ -61,6 +67,10 @@ static class Plugin
     }
 
     public static void SetReceiverSyncMode(IntPtr receiver, int syncToSender) {}
+
+    public static void SetReceiverSyncTimeout(IntPtr receiver, int timeoutMs) {}
+
+    public static void SetReceiverSyncSleep(IntPtr receiver, int sleepMs) {}
 
 #endif
 }

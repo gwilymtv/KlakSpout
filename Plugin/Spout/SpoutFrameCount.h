@@ -93,7 +93,7 @@ class SPOUT_DLLEXP spoutFrameCount {
 	bool GetNewFrame();
 
 	// Receiver wait on semaphore update
-	bool WaitNewFrame(DWORD dwTimeout);
+	bool WaitNewFrame(DWORD dwTimeout, DWORD dwSleepMs = 4);
 
 	// For class cleanup functions
 	void CleanupFrameCount();

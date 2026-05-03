@@ -27,6 +27,16 @@ public:
         _syncToSender.store(sync);
     }
 
+    void setSyncTimeout(int ms)
+    {
+        _syncTimeoutMs.store(ms > 0 ? ms : 1);
+    }
+
+    void setSyncSleep(int ms)
+    {
+        _syncSleepMs.store(ms >= 0 ? ms : 0);
+    }
+
     void update()
     {
         // Wait for or poll a new frame from the sender.
@@ -34,7 +44,7 @@ public:
         // effectively pacing Unity to the sender's frame rate.
         // Both calls are no-ops until frame counting is enabled on connect.
         if (_syncToSender.load())
-            _frame.WaitNewFrame(33);
+            _frame.WaitNewFrame(_syncTimeoutMs.load(), _syncSleepMs.load());
         else
             _frame.GetNewFrame();
         _isFrameNew = _frame.IsFrameNew();
@@ -112,6 +122,8 @@ private:
     WRL::ComPtr<IUnknown> _texture;
     spoutFrameCount _frame;
     std::atomic<bool> _syncToSender{false};
+    std::atomic<int>  _syncTimeoutMs{33};
+    std::atomic<int>  _syncSleepMs{4};
     bool _isFrameNew = true;
     bool _frameCountEnabled = false;
 };

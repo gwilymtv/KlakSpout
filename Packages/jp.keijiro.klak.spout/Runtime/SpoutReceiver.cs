@@ -125,6 +125,8 @@ public sealed partial class SpoutReceiver : MonoBehaviour
         {
             _receiver = new Receiver(_sourceName);
             _receiver.SetSyncMode(_syncToSender);
+            _receiver.SetSyncTimeout(_syncTimeoutMs);
+            _receiver.SetSyncSleep(_syncSleepMs);
         }
 
         // Receiver plugin-side update

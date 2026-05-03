@@ -74,6 +74,18 @@ sealed class Receiver : System.IDisposable
         Plugin.SetReceiverSyncMode(_plugin, sync ? 1 : 0);
     }
 
+    public void SetSyncTimeout(int ms)
+    {
+        if (_plugin == IntPtr.Zero) return;
+        Plugin.SetReceiverSyncTimeout(_plugin, ms);
+    }
+
+    public void SetSyncSleep(int ms)
+    {
+        if (_plugin == IntPtr.Zero) return;
+        Plugin.SetReceiverSyncSleep(_plugin, ms);
+    }
+
     #endregion
 
     #region Frame update method

@@ -49,7 +49,8 @@ partial class SpoutReceiver
 
     #region Sync settings
 
-    [SerializeField] bool _syncToSender = false;
+    [SerializeField, Tooltip("Block the render thread until the sender produces a new frame, pacing Unity to the sender's frame rate. Disabling VSync is recommended when using this. When disabled, Unity runs at its own rate and skips rendering if no new frame has arrived.")]
+    bool _syncToSender = false;
 
     public bool syncToSender
       { get => _syncToSender;
@@ -107,7 +108,8 @@ partial class SpoutReceiver
 
     #region Double-buffer option
 
-    [SerializeField] bool _useDoubleBuffer = false;
+    [SerializeField, Tooltip("Maintain two receive buffers so Unity always displays a fully written frame while the next one is being received. Reduces tearing and flickering at the cost of one extra frame of latency.")]
+    bool _useDoubleBuffer = false;
 
     public bool useDoubleBuffer
       { get => _useDoubleBuffer;

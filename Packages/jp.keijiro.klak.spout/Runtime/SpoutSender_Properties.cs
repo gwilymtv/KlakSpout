@@ -69,17 +69,7 @@ partial class SpoutSender
 
     #endregion
 
-    #region Double-buffer option
-
-    [SerializeField] bool _useDoubleBuffer = false;
-
-    public bool useDoubleBuffer
-      { get => _useDoubleBuffer;
-        set => _useDoubleBuffer = value; }
-
-    #endregion
-
-
 }
+
 
 } // namespace Klak.Spout

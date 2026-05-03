@@ -11,17 +11,23 @@ sealed class Receiver : System.IDisposable
 {
     #region Public properties
 
-    public Texture2D Texture => _texture;
-    public bool IsFrameNew => _isFrameNew;
+    public Texture2D Texture    => _texture;
+    public bool  IsFrameNew    => _isFrameNew;
+    public float SyncWaitMs    => _syncWaitMs;
+    public float SenderFps     => _senderFps;
+    public bool  SyncTimedOut  => _syncTimedOut;
 
     #endregion
 
     #region Private objects
 
-    IntPtr _plugin;
+    IntPtr    _plugin;
     EventKicker _event;
     Texture2D _texture;
-    bool _isFrameNew = true;
+    bool  _isFrameNew   = true;
+    float _syncWaitMs;
+    float _senderFps;
+    bool  _syncTimedOut;
 
     #endregion
 
@@ -95,7 +101,10 @@ sealed class Receiver : System.IDisposable
         if (_plugin == IntPtr.Zero) return;
 
         var data = Plugin.GetReceiverData(_plugin);
-        _isFrameNew = data.isFrameNew;
+        _isFrameNew   = data.isFrameNew;
+        _syncWaitMs   = data.syncWaitMs;
+        _senderFps    = data.senderFps;
+        _syncTimedOut = data.syncTimedOut;
 
         // Texture refresh:
         // If we are referring to an old texture pointer, destroy it first.

@@ -14,6 +14,9 @@ static class Plugin
         public Format format;
         public IntPtr texturePointer;
         [MarshalAs(UnmanagedType.Bool)] public bool isFrameNew;
+        public float syncWaitMs;
+        public float senderFps;
+        [MarshalAs(UnmanagedType.Bool)] public bool syncTimedOut;
     }
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN

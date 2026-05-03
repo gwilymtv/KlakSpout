@@ -14,7 +14,8 @@ sealed class SpoutReceiverEditor : UnityEditor.Editor
     SerializedProperty _targetTexture;
     SerializedProperty _targetRenderer;
     SerializedProperty _targetMaterialProperty;
-    SerializedProperty _useDoubleBuffer;
+    SerializedProperty _diagLogInterval;
+    SerializedProperty _diagDisplayInterval;
 
     static class Labels
     {
@@ -74,7 +75,8 @@ sealed class SpoutReceiverEditor : UnityEditor.Editor
         _targetTexture  = finder["_targetTexture"];
         _targetRenderer = finder["_targetRenderer"];
         _targetMaterialProperty = finder["_targetMaterialProperty"];
-        _useDoubleBuffer = finder["_useDoubleBuffer"];
+        _diagLogInterval     = finder["_diagLogInterval"];
+        _diagDisplayInterval = finder["_diagDisplayInterval"];
     }
 
     public override void OnInspectorGUI()
@@ -123,7 +125,9 @@ sealed class SpoutReceiverEditor : UnityEditor.Editor
             EditorGUILayout.PropertyField(_syncSleepMs,   new GUIContent("Sleep (ms)"));
             EditorGUI.indentLevel--;
         }
-        EditorGUILayout.PropertyField(_useDoubleBuffer);
+        EditorGUILayout.Space();
+        EditorGUILayout.PropertyField(_diagLogInterval,     new GUIContent("Log Interval (s)"));
+        EditorGUILayout.PropertyField(_diagDisplayInterval, new GUIContent("Display Interval (s)"));
 
         serializedObject.ApplyModifiedProperties();
 
@@ -134,10 +138,12 @@ sealed class SpoutReceiverEditor : UnityEditor.Editor
             EditorGUILayout.Space();
             var recv = (SpoutReceiver)target;
             EditorGUI.BeginDisabledGroup(true);
-            EditorGUILayout.FloatField("Copies / Sec",  recv.copiesPerSecond);
-            EditorGUILayout.FloatField("Flushes / Sec", recv.flushesPerSecond);
-            EditorGUILayout.IntField("Reconnect Count", recv.reconnectCount);
-            EditorGUILayout.IntField("Missed Frames",   recv.missedFrames);
+            EditorGUILayout.FloatField("Copies / Sec",    recv.copiesPerSecond);
+            EditorGUILayout.FloatField("Sender FPS",       recv.senderFps);
+            EditorGUILayout.FloatField("Avg Sync Wait Ms", recv.avgSyncWaitMs);
+            EditorGUILayout.IntField("Reconnect Count",    recv.reconnectCount);
+            EditorGUILayout.IntField("Missed Frames",      recv.missedFrames);
+            EditorGUILayout.IntField("Sync Timeouts",      recv.syncTimeouts);
             EditorGUI.EndDisabledGroup();
             Repaint();
         }

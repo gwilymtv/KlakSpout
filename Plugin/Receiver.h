@@ -5,6 +5,7 @@
 #include "Format.h"
 #include "Spout/SpoutFrameCount.h"
 #include <atomic>
+#include <chrono>
 
 namespace KlakSpout {
 
@@ -43,11 +44,19 @@ public:
         // WaitNewFrame blocks the render thread until the sender signals,
         // effectively pacing Unity to the sender's frame rate.
         // Both calls are no-ops until frame counting is enabled on connect.
-        if (_syncToSender.load())
-            _frame.WaitNewFrame(_syncTimeoutMs.load(), _syncSleepMs.load());
-        else
+        if (_syncToSender.load()) {
+            auto t0 = std::chrono::steady_clock::now();
+            bool got = _frame.WaitNewFrame(_syncTimeoutMs.load(), _syncSleepMs.load());
+            _syncWaitMs   = std::chrono::duration<float, std::milli>(
+                std::chrono::steady_clock::now() - t0).count();
+            _syncTimedOut = !got;
+        } else {
             _frame.GetNewFrame();
+            _syncWaitMs   = 0.0f;
+            _syncTimedOut = false;
+        }
         _isFrameNew = _frame.IsFrameNew();
+        _senderFps  = static_cast<float>(_frame.GetSenderFps());
 
         // Search the Spout name list.
         unsigned int width, height;
@@ -104,6 +113,9 @@ public:
         Format format;
         void* texture_pointer;
         int is_frame_new;
+        float sync_wait_ms;
+        float sender_fps;
+        int sync_timed_out;
     };
 
     InteropData getInteropData() const
@@ -111,7 +123,10 @@ public:
         return InteropData
           { .width = _width, .height = _height, .format = _format,
             .texture_pointer = _texture.Get(),
-            .is_frame_new = _isFrameNew ? 1 : 0 };
+            .is_frame_new    = _isFrameNew    ? 1 : 0,
+            .sync_wait_ms    = _syncWaitMs,
+            .sender_fps      = _senderFps,
+            .sync_timed_out  = _syncTimedOut  ? 1 : 0 };
     }
 
 private:
@@ -124,8 +139,11 @@ private:
     std::atomic<bool> _syncToSender{false};
     std::atomic<int>  _syncTimeoutMs{33};
     std::atomic<int>  _syncSleepMs{4};
-    bool _isFrameNew = true;
-    bool _frameCountEnabled = false;
+    bool  _isFrameNew = true;
+    bool  _frameCountEnabled = false;
+    bool  _syncTimedOut = false;
+    float _syncWaitMs = 0.0f;
+    float _senderFps  = 0.0f;
 };
 
 } // namespace KlakSpout

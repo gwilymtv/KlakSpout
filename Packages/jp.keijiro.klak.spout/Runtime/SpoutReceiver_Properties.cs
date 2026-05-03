@@ -106,23 +106,32 @@ partial class SpoutReceiver
 
     #endregion
 
-    #region Double-buffer option
+    #region Diagnostics output
 
-    [SerializeField, Tooltip("Maintain two receive buffers so Unity always displays a fully written frame while the next one is being received. Reduces tearing and flickering at the cost of one extra frame of latency.")]
-    bool _useDoubleBuffer = false;
+    [SerializeField, Min(0), Tooltip("Interval in seconds between diagnostic log lines. 0 disables logging.")]
+    float _diagLogInterval = 0f;
 
-    public bool useDoubleBuffer
-      { get => _useDoubleBuffer;
-        set => _useDoubleBuffer = value; }
+    public float diagLogInterval
+      { get => _diagLogInterval;
+        set => _diagLogInterval = Mathf.Max(0, value); }
+
+    [SerializeField, Min(0), Tooltip("Interval in seconds between on-screen diagnostic overlay updates. 0 disables the overlay.")]
+    float _diagDisplayInterval = 0f;
+
+    public float diagDisplayInterval
+      { get => _diagDisplayInterval;
+        set => _diagDisplayInterval = Mathf.Max(0, value); }
 
     #endregion
 
     #region Diagnostics
 
     public float copiesPerSecond  { get; private set; }
-    public float flushesPerSecond { get; private set; }
+    public float avgSyncWaitMs    { get; private set; }
+    public float senderFps        { get; private set; }
     public int   reconnectCount   { get; private set; }
     public int   missedFrames     { get; private set; }
+    public int   syncTimeouts     { get; private set; }
 
     #endregion
 }

@@ -22,20 +22,23 @@ public sealed partial class SpoutSender : MonoBehaviour
 
     #endregion
 
-    #region Buffer texture objects
+    #region Buffer texture object
 
     RenderTexture _buffer;
 
     void PrepareBuffer(int width, int height)
     {
+        // If the buffer exists but has wrong dimensions, destroy it first.
         if (_buffer != null &&
             (_buffer.width != width || _buffer.height != height))
         {
             ReleaseSender();
-            Utility.Destroy(_buffer); _buffer = null;
+            Utility.Destroy(_buffer);
+            _buffer = null;
         }
-        if (width <= 0 || height <= 0) return;
-        if (_buffer == null)
+
+        // Create a buffer if it hasn't been allocated yet.
+        if (_buffer == null && width > 0 && height > 0)
         {
             _buffer = new RenderTexture(width, height, 0);
             _buffer.hideFlags = HideFlags.DontSave;

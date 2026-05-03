@@ -68,8 +68,6 @@ partial class SpoutSender
       => _resources = resources;
 
     #endregion
-
 }
-
 
 } // namespace Klak.Spout

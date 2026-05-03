@@ -21,31 +21,42 @@ public sealed partial class SpoutReceiver : MonoBehaviour
 
     #endregion
 
-    #region Buffer texture objects
+    #region Buffer texture object
 
     RenderTexture _buffer;
 
-    RenderTexture PrepareBuffers()
+    RenderTexture PrepareBuffer()
     {
+        // Receive-to-Texture mode:
+        // Destroy the internal buffer and return the target texture.
         if (_targetTexture != null)
         {
-            Utility.Destroy(_buffer); _buffer = null;
+            if (_buffer != null)
+            {
+                Utility.Destroy(_buffer);
+                _buffer = null;
+            }
             return _targetTexture;
         }
 
         var src = _receiver.Texture;
 
+        // If the buffer exists but has wrong dimensions, destroy it first.
         if (_buffer != null &&
             (_buffer.width != src.width || _buffer.height != src.height))
         {
-            Utility.Destroy(_buffer); _buffer = null;
+            Utility.Destroy(_buffer);
+            _buffer = null;
         }
+
+        // Create a buffer if it hasn't been allocated yet.
         if (_buffer == null)
         {
             _buffer = new RenderTexture(src.width, src.height, 0);
             _buffer.hideFlags = HideFlags.DontSave;
             _buffer.Create();
         }
+
         return _buffer;
     }
 
@@ -157,7 +168,8 @@ public sealed partial class SpoutReceiver : MonoBehaviour
 
     void OnDestroy()
     {
-        Utility.Destroy(_buffer); _buffer = null;
+        Utility.Destroy(_buffer);
+        _buffer = null;
     }
 
     void Update()
@@ -191,16 +203,16 @@ public sealed partial class SpoutReceiver : MonoBehaviour
         }
 
         // Received texture buffering
-        var dest = PrepareBuffers();
-        if (dest.isDataSRGB)
-            Blitter.BlitFromSrgb(_resources, _receiver.Texture, dest);
+        var buffer = PrepareBuffer();
+        if (buffer.isDataSRGB)
+            Blitter.BlitFromSrgb(_resources, _receiver.Texture, buffer);
         else
-            Blitter.Blit(_resources, _receiver.Texture, dest, true);
+            Blitter.Blit(_resources, _receiver.Texture, buffer, true);
 
-        var displayTarget = (_targetTexture != null) ? _targetTexture : _buffer;
+        // Renderer override
         if (_targetRenderer != null)
             RendererOverride.SetTexture
-              (_targetRenderer, _targetMaterialProperty, displayTarget);
+              (_targetRenderer, _targetMaterialProperty, buffer);
 
         UpdateDiagnostics(true,
             _receiver.Texture.GetNativeTexturePtr(),
